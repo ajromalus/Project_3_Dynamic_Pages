@@ -111,34 +111,6 @@ function filterProjectsByCategory(categoryId) {
         .catch(error => console.error("Error filtering projects:", error));
 }
 
-document.getElementById("login-form").addEventListener("submit", function (e) {
-    e.preventDefault();
-    
-    // Here you would send a request to your login API
-    // For now, simulate successful login
-    localStorage.setItem("loggedIn", "true");
-    window.location.href = "index.html";
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-
-    const editBar = document.getElementById("edit-bar");
-    const loginLink = document.querySelector('a[href="./login.html"]');
-
-    if (isLoggedIn) {
-        // Show edit bar
-        editBar.classList.remove("hidden");
-
-        // Change "Login" to "Logout"
-        loginLink.textContent = "Logout";
-        loginLink.href = "#";
-        loginLink.addEventListener("click", function () {
-            localStorage.removeItem("loggedIn");
-            location.reload();
-        });
-    }
-});
 
 
 
