@@ -274,3 +274,30 @@ footer {
 	background-color: white;
 	width: 100%;
 }
+
+#edit-bar {
+  background-color: black;
+  color: white;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Work Sans';
+  font-size: 16px;
+  gap: 10px;
+}
+
+.edit-icon {
+  height: 20px;
+  width: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+.hyperlink {
+  text-decoration: none;
+  color: inherit;
+}
+
