@@ -387,7 +387,7 @@ footer {
 	color: white;
 	height: 50px;
 	width: 100%;
-	display: flex;
+	/* display: flex; */
 	align-items: center;
 	justify-content: center;
 	font-family: 'Work Sans';
@@ -407,4 +407,18 @@ footer {
 .hyperlink {
 	text-decoration: none;
 	color: inherit;
+}
+
+.edit-mode-content {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.edit-content {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	margin-top: 10px;
 }

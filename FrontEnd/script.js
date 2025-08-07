@@ -110,6 +110,23 @@ function filterProjectsByCategory(categoryId) {
         })
         .catch(error => console.error("Error filtering projects:", error));
 }
+document.addEventListener("DOMContentLoaded", function () {
+    const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+    const editBar = document.getElementById("edit-bar");
+    const loginLink = document.querySelector('a[href="./login.html"]');
+
+    if (isLoggedIn) {
+        if (editBar) editBar.classList.remove("hidden");
+
+        loginLink.textContent = "Logout";
+        loginLink.href = "#";
+        loginLink.addEventListener("click", function () {
+            localStorage.removeItem("loggedIn");
+            localStorage.removeItem("token");
+            location.reload();
+        });
+    }
+});
 
 
 

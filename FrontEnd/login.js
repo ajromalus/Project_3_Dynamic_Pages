@@ -1,42 +1,48 @@
 const loginURL = "http://localhost:5678/api/users/login";
 
-fetch(loginURL, {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        email: "user@example.com",
-        password: "password123"
-    })
-});
 
-
-document.getElementById("login-form").addEventListener("submit", function (e) {
+console.log(document.getElementById("login-form"));
+document.getElementById("login-form").addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    // Here you would send a request to your login API
-    // For now, simulate successful login
-    localStorage.setItem("loggedIn", "true");
-    window.location.href = "index.html";
-});
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-document.addEventListener("DOMContentLoaded", function () {
-    const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+    // Check for existing error message and remove it
+    const existingError = document.getElementById("login-error");
+    if (existingError) existingError.remove();
 
-    const editBar = document.getElementById("edit-bar");
-    const loginLink = document.querySelector('a[href="./login.html"]');
-
-    if (isLoggedIn) {
-        // Show edit bar
-        editBar.classList.remove("hidden");
-
-        // Change "Login" to "Logout"
-        loginLink.textContent = "Logout";
-        loginLink.href = "#";
-        loginLink.addEventListener("click", function () {
-            localStorage.removeItem("loggedIn");
-            location.reload();
+    try {
+        const response = await fetch("http://localhost:5678/api/users/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email, password })
         });
+
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("loggedIn", "true");
+            window.location.href = "index.html";
+        } else {
+            showError("Incorrect email or password.");
+        }
+    } catch (error) {
+        console.error("Login error:", error);
+        showError("An error occurred. Please try again later.");
     }
 });
+
+function showError(message) {
+    const form = document.getElementById("login-form");
+    const errorMsg = document.createElement("p");
+    errorMsg.id = "login-error";
+    errorMsg.style.color = "red";
+    errorMsg.style.marginTop = "10px";
+    errorMsg.textContent = message;
+    form.appendChild(errorMsg);
+}
+
+
