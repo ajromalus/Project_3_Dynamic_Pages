@@ -1,132 +1,179 @@
-// API endpoint URL for the architect's projects
+// API endpoints
 const apiURL = "http://localhost:5678/api/works";
 const categoriesURL = "http://localhost:5678/api/categories";
 
-let jobCache = []
-// Make the API call with fetch to dynamically retrieve the architect's projects. 
+let jobCache = []; // store fetched projects
+
+// DOM Elements
+const gallery = document.querySelector(".gallery");
+const categoriesContainer = document.querySelector(".categories");
+const modal = document.querySelector(".modal");
+const overlay = document.querySelector(".overlay");
+const openModalBtn = document.querySelector(".btn-open");
+const closeModalBtn = document.querySelector(".btn-close");
+
+// ======================
+// FETCH PROJECTS
+// ======================
 fetch(apiURL)
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
-        }
-        return response.json();
-    })
-    .then(jobs => {
-        jobCache = jobs;
-        displayProjects(jobs);
-    })
-    .catch(error => {
-        console.error("Fetch error:", error);
-    });
+  .then(response => {
+    if (!response.ok) throw new Error("Network response was not ok");
+    return response.json();
+  })
+  .then(jobs => {
+    jobCache = jobs;
+    displayProjects(jobs); // show in main gallery
 
-// Make another API call to retrieve the filtered projects?
-// Fetch categories using request URL
+    // Attach modal loader now that projects exist
+    openModalBtn.addEventListener("click", () => {
+      loadProjectsIntoModal();
+      openModal();
+    });
+  })
+  .catch(error => console.error("Fetch error:", error));
+
+// ======================
+// FETCH CATEGORIES
+// ======================
 fetch(categoriesURL)
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Network response was not ok for categories");
-        }
-        return response.json();
-    })
-    .then(categories => {
-        displayCategories(categories);
-    })
-    .catch(error => {
-        console.error("Error fetching categories:", error);
-    });
-// Function to display the projects in the gallery
-// Create HTML elements for each project and append them to the gallery
+  .then(response => {
+    if (!response.ok) throw new Error("Network response was not ok for categories");
+    return response.json();
+  })
+  .then(categories => {
+    displayCategories(categories);
+  })
+  .catch(error => console.error("Error fetching categories:", error));
+
+// ======================
+// DISPLAY PROJECTS
+// ======================
 function displayProjects(projects) {
-    const gallery = document.querySelector(".gallery");
-    gallery.innerHTML = "";
+  gallery.innerHTML = "";
 
-    projects.forEach(project => {
-        const figure = document.createElement("figure");
-        const img = document.createElement("img");
-        const caption = document.createElement("figcaption");
+  projects.forEach(project => {
+    const figure = document.createElement("figure");
+    const img = document.createElement("img");
+    const caption = document.createElement("figcaption");
 
-        img.src = project.imageUrl;
-        img.alt = project.title;
-        caption.textContent = project.title;
+    img.src = project.imageUrl;
+    img.alt = project.title;
+    caption.textContent = project.title;
 
-        figure.appendChild(img);
-        figure.appendChild(caption);
-        gallery.appendChild(figure);
-    });
+    figure.appendChild(img);
+    figure.appendChild(caption);
+    gallery.appendChild(figure);
+  });
 }
 
-// Function to display categories and create filter buttons
-// Create buttons for each category and append them to the categories section
+// ======================
+// DISPLAY CATEGORIES
+// ======================
 function displayCategories(categories) {
-    const categoriesContainer = document.querySelector(".categories");
-    categoriesContainer.innerHTML = ""; 
-    // Create filter buttons dynamically
+  categoriesContainer.innerHTML = "";
 
-    //All button to show all projects
-    const allBtn = document.createElement("button");
-    categoriesContainer.appendChild(allBtn);
-    allBtn.dataset.id = "all"; // Set data-id to "all"
-    allBtn.textContent = "All";
-    allBtn.classList.add("filter-btn");
+  // All button
+  const allBtn = document.createElement("button");
+  allBtn.textContent = "All";
+  allBtn.classList.add("filter-btn");
+  allBtn.dataset.id = "all";
+  categoriesContainer.appendChild(allBtn);
 
-    //Buttons for each fiiltered category
-    categories.forEach(category => {
-        const btn = document.createElement("button");
-        btn.textContent = category.name;
-        btn.classList.add("filter-btn");
-        btn.dataset.id = category.id;
-        categoriesContainer.appendChild(btn);
+  // Individual category buttons
+  categories.forEach(category => {
+    const btn = document.createElement("button");
+    btn.textContent = category.name;
+    btn.classList.add("filter-btn");
+    btn.dataset.id = category.id;
+    categoriesContainer.appendChild(btn);
+  });
 
-
+  // Button click events
+  const allButtons = document.querySelectorAll(".filter-btn");
+  allButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      filterProjectsByCategory(button.dataset.id);
     });
-
-    //Make buttons clickable
-    const allButtons = document.querySelectorAll(".filter-btn");
-
-    allButtons.forEach(button => {
-        button.addEventListener("click", () => {
-            const categoryId = button.dataset.id;
-            filterProjectsByCategory(categoryId);
-        });
-    });
+  });
 }
 
-//Filter projects by category
+// ======================
+// FILTER PROJECTS
+// ======================
 function filterProjectsByCategory(categoryId) {
-    fetch(apiURL)
-        .then(response => response.json())
-        .then(projects => {
-            let filteredProjects;
+  let filteredProjects;
 
-            if (categoryId === "all") {
-                filteredProjects = projects; // Show all
-            } else {
-                filteredProjects = projects.filter(project => {
-                    return project.categoryId == categoryId;
-                });
-            }
+  if (categoryId === "all") {
+    filteredProjects = jobCache;
+  } else {
+    filteredProjects = jobCache.filter(project => project.categoryId == categoryId);
+  }
 
-            displayProjects(filteredProjects);
-        })
-        .catch(error => console.error("Error filtering projects:", error));
+  displayProjects(filteredProjects);
 }
-document.addEventListener("DOMContentLoaded", function () {
-    const isLoggedIn = localStorage.getItem("loggedIn") === "true";
-    const editBar = document.getElementById("edit-bar");
-    const loginLink = document.querySelector('a[href="./login.html"]');
 
-    if (isLoggedIn) {
-        if (editBar) editBar.classList.remove("hidden");
+// ======================
+// MODAL FUNCTIONALITY
+// ======================
+function loadProjectsIntoModal() {
+  const container = document.getElementById("modal-projects");
+  container.innerHTML = "";
 
-        loginLink.textContent = "Logout";
-        loginLink.href = "#";
-        loginLink.addEventListener("click", function () {
-            localStorage.removeItem("loggedIn");
-            localStorage.removeItem("token");
-            location.reload();
-        });
-    }
+  jobCache.forEach(job => {
+    const projectDiv = document.createElement("div");
+    projectDiv.classList.add("project-item");
+    projectDiv.innerHTML = `
+      <img src="${job.imageUrl}" alt="${job.title}">
+      
+    `;
+    container.appendChild(projectDiv);
+  });
+}
+
+function openModal() {
+  modal.classList.remove("hidden");
+  overlay.classList.remove("hidden");
+}
+
+function closeModal() {
+  modal.classList.add("hidden");
+  overlay.classList.add("hidden");
+}
+
+closeModalBtn.addEventListener("click", closeModal);
+overlay.addEventListener("click", closeModal);
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !modal.classList.contains("hidden")) {
+    closeModal();
+  }
 });
+
+// ======================
+// EDIT BAR FOR LOGGED-IN USERS
+// ======================
+document.addEventListener("DOMContentLoaded", () => {
+  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+  const editBar = document.getElementById("edit-bar");
+  const categoryWrapper = document.getElementById("category-container");
+  const loginLink = document.querySelector('a[href="./login.html"]');
+  const editToggle = document.querySelector(".edit-toggle");
+
+  if (isLoggedIn) {
+    if (editBar) editBar.classList.remove("hidden");
+    if (categoryWrapper) categoryWrapper.classList.add("hidden");
+    if (editToggle) editToggle.classList.remove("hidden");
+
+    loginLink.textContent = "Logout";
+    loginLink.href = "#";
+    loginLink.addEventListener("click", () => {
+      localStorage.removeItem("loggedIn");
+      localStorage.removeItem("token");
+      location.reload();
+    });
+  }
+});
+
 
 
 

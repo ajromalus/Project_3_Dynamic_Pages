@@ -20,7 +20,7 @@
 			<!-- add edit icon -->
 			<div class="edit-content">
 				<img src="./assets/icons/Edit.png" alt="Edit Icon" class="edit-icon">
-				<span>Edit Mode</span>
+				<span>Editing Mode</span>
 			</div>
 		</div>
 	</div>
@@ -53,10 +53,36 @@
 			</article>
 		</section>
 		<section id="portfolio">
-			<h2>My Projects</h2>
-			<div class="categories">
+			<div class="projects-heading">
+				<h2>My Projects</h2>
+				<div class="edit-toggle hidden">
+					<button class="btn btn-open">
+						<img src="./assets/icons/Group.png" alt="Edit Icon" class="edit-icon">
+						Edit
+					</button>
 
+				</div>
 			</div>
+
+			<div id="category-container">
+				<div class="categories">
+
+				</div>
+			</div>
+			<section class="modal hidden">
+				<div class="flex">
+					<button class="btn-close">⨉</button>
+				</div>
+				<h3>Photo Gallery</h3>
+				<div id="modal-projects"></div>
+
+				<button class="add-btn">Add a photo</button>
+
+			</section>
+
+			<div class="overlay hidden"></div>
+
+
 			<div class="gallery">
 				<!-- <figure>
 				<img src="assets/images/abajour-tahina.png" alt="Tahina Lampshade">
