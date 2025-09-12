@@ -70,43 +70,47 @@
 				</div>
 			</div>
 			<section class="modal hidden">
-				<div class="close-button modal-buttons">
-					<button class="btn-close">⨉</button>
+				<div class="modal-header">
+					<button class="btn-close"><img id="close-icon" src="./assets/icons/close-icon.png"
+							alt="Close Icon"></button>
+					<button class="btn-close hidden" id="back-to-gallery">
+						<img src="./assets/icons/Arrow.png" alt="Back Icon">
+					</button>
+
 				</div>
-				<div id="modal-gallery" class="modal-section">
-					<h3 class="modal-title">Photo Gallery</h3>
-					<div id="modal-projects"></div>
+				<div class="photo-gallery">
+					<!-- Photo Gallery -->
+					<div id="modal-gallery" class="modal-section">
+						<h3 class="modal-title">Photo Gallery</h3>
+						<div id="modal-projects"></div>
 
-					<hr class="custom-hr">
+						<hr class="custom-hr">
 
 
-					<button class="add-btn" id="open-form-btn">Add a photo</button>
+						<button class="add-btn" id="open-form-btn">Add a photo</button>
+					</div>
 				</div>
-
 				<!-- Add Project Form -->
 				<div id="modal-form" class="modal-section hidden">
-					<div class="back-button hidden">
-						<button class="btn-close" id="back-to-gallery">
-							<img src="./assets/icons/Arrow.png" alt="Back Icon">
-						</button>
-					</div>
 
 					<h3 class="modal-title">Add photo</h3>
 
 					<div class="image-preview" id="image-preview-container">
 						<div class="placeholder">
+							<img src="./assets/icons/placeholder.png" alt="placeholder image">
 							<label for="imageUpload" class="upload-btn">+ Add photo</label>
 							<input type="file" id="imageUpload" accept="image/*">
+							<p>jpg, png: max 4 MB</p>
 						</div>
 						<img id="image-preview" src="" alt="Preview" style="display:none;" />
 					</div>
 
 					<form id="add-project-form" enctype="multipart/form-data">
 
-						<label for="project-title">Title</label>
-						<input type="text" id="title" name="title" placeholder="Title" required>
+						<label id="add-label" for="project-title">Title</label>
+						<input type="text" id="title" name="title" required>
 
-						<label for="project-category">Category</label>
+						<label id="add-label" for="project-category">Category</label>
 						<select id="category" name="category" required></select>
 
 						<p id="form-error" style="color:red; display:none;">

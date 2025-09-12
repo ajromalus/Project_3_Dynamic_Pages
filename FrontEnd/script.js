@@ -250,12 +250,12 @@ addProjectForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
     // Collect data
-    const image = document.getElementById("image").files[0];
+    const imageUpload = document.getElementById("imageUpload").files[0];
     const title = document.getElementById("title").value.trim();
     const category = document.getElementById("category").value;
 
     // Validate fields
-    if (!image || !title || !category) {
+    if (!imageUpload || !title || !category) {
         formError.style.display = "block";
         return;
     }
@@ -263,7 +263,7 @@ addProjectForm.addEventListener("submit", (e) => {
 
     // Prepare FormData
     const formData = new FormData();
-    formData.append("image", image);
+    formData.append("image", imageUpload);
     formData.append("title", title);
     formData.append("category", category);
 
@@ -288,8 +288,18 @@ addProjectForm.addEventListener("submit", (e) => {
             // Reset form
             addProjectForm.reset();
 
-            // Optional: close modal after adding
-            closeModal();
+            // Reset preview
+            imagePreview.style.display = "none";
+            placeholder.style.display = "flex";
+
+            // Go back to gallery view
+            modalForm.classList.add("hidden");
+            modalGallery.classList.remove("hidden");
+            backToGalleryBtn.classList.add("hidden");
+
+            // Refresh modal gallery
+            loadProjectsIntoModal();
+
         })
         .catch(error => console.error("Error adding project:", error));
 });
@@ -306,19 +316,20 @@ const backToGalleryBtn = document.getElementById("back-to-gallery");
 openFormBtn.addEventListener("click", () => {
     modalGallery.classList.add("hidden");
     modalForm.classList.remove("hidden");
-    document.querySelector(".back-button").classList.remove("hidden");
+    backToGalleryBtn.classList.remove("hidden"); // show arrow
 });
 
 backToGalleryBtn.addEventListener("click", () => {
     modalForm.classList.add("hidden");
     modalGallery.classList.remove("hidden");
-    document.querySelector(".back-button").classList.add("hidden");
-    
+    backToGalleryBtn.classList.add("hidden"); // hide arrow
+
 });
 
 // IMAGE PREVIEW
-const imageInput = document.getElementById("image");
+const imageInput = document.getElementById("imageUpload");
 const imagePreview = document.getElementById("image-preview");
+const placeholder = document.querySelector("#image-preview-container .placeholder");
 
 imageInput.addEventListener("change", () => {
     const file = imageInput.files[0];
@@ -327,9 +338,11 @@ imageInput.addEventListener("change", () => {
         reader.onload = e => {
             imagePreview.src = e.target.result;
             imagePreview.style.display = "block";
+            placeholder.style.display = "none";
         };
         reader.readAsDataURL(file);
     } else {
         imagePreview.style.display = "none";
+        placeholder.style.display = "flex";
     }
 });
